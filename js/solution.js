@@ -801,6 +801,7 @@ function initApp() {
 			  break;
 
 			  case 'mask':
+					debugger;
 					canvas.style.background = `url(${wssResponse.url})`;
 			  break;
 			}
