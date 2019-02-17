@@ -450,7 +450,7 @@ function initApp() {
 	function crtNewCommentNode( date, message ) {
 		return el('div', { class: 'comment' }, [
 		  el('p', { class: 'comment__time' }, date),
-		  el('p', { class: 'comment__message' }, message)
+		  el('p', { class: 'comment__message', style: 'white-space: initial' }, message)
 		]);
 	};
 
