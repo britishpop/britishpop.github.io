@@ -19,7 +19,7 @@ function initApp() {
     preloader = app.querySelector('.image-loader'),
     errorMsg = app.querySelector('.error'),
     errorHeader = errorMsg.querySelector('.error__header'),
-  	errorText = errorMsg.querySelector('.error__message');
+		errorText = errorMsg.querySelector('.error__message');
 
   const picture = (() => {
 		const picture = document.createElement('div'),
