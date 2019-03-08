@@ -23,7 +23,7 @@ function initApp() {
 
   const picture = (() => {
     const picture = document.createElement('div'),
-    	canvas = document.createElement('canvas');
+      canvas = document.createElement('canvas');
 
     picture.id = 'picture';
     picture.appendChild(image);
@@ -36,12 +36,12 @@ function initApp() {
   })();
 
   const clickPointShifts = (() => {
-  	const pointShifts = {},
-    	markerBounds = marker.getBoundingClientRect(),
+    const pointShifts = {},
+      markerBounds = marker.getBoundingClientRect(),
       formBounds = marker.parentElement.getBoundingClientRect();
-  	pointShifts.left = (markerBounds.left - formBounds.left) + markerBounds.width / 2;
-  	pointShifts.top = (markerBounds.top - formBounds.top) + markerBounds.height;
-  	return pointShifts;
+    pointShifts.left = (markerBounds.left - formBounds.left) + markerBounds.width / 2;
+    pointShifts.top = (markerBounds.top - formBounds.top) + markerBounds.height;
+    return pointShifts;
   })();
 
   const apiURL = '//neto-api.herokuapp.com/pic';
@@ -60,42 +60,42 @@ function initApp() {
         cb.apply(this, args);
         isWaiting = true;
         if (isAnimation) {
-        	requestAnimationFrame(() => isWaiting = false);
+          requestAnimationFrame(() => isWaiting = false);
         } else {
-        	setTimeout(() => isWaiting = false, delay);
+          setTimeout(() => isWaiting = false, delay);
         }
       }
     }
   };
 
-	function debounce( func, delay = 0 ) {
-	    let timeout;
+  function debounce( func, delay = 0 ) {
+      let timeout;
 
-	    return () => {
+      return () => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
           timeout = null;
           func();
         }, delay);
-	    };
-	}
+      };
+  }
 
   function getSessionSettings( key ) {
-  	try {
-    	if (sessionStorage[key]) {
+    try {
+      if (sessionStorage[key]) {
         return JSON.parse(sessionStorage[key]);
-    	}
+      }
     } catch (err) {
-    	console.error(`${err}`);
+      console.error(`${err}`);
     }
-	};
+  };
 
-	function checkResponseStatus( resp ) {
-  	if (200 <= resp.status && resp.status < 300) {
-    	return resp.json();
+  function checkResponseStatus( resp ) {
+    if (200 <= resp.status && resp.status < 300) {
+      return resp.json();
     } else {
-    	errorHeader.textContent = 'Ошибка: ' + resp.status;
-    	throw new Error(`${resp.statusText}`);
+      errorHeader.textContent = 'Ошибка: ' + resp.status;
+      throw new Error(`${resp.statusText}`);
     }
   };
 
@@ -113,32 +113,32 @@ function initApp() {
   };
 
   function hideComments( radioBtn ) {
-  	Array.from(app.getElementsByClassName('comments__form'))
-    	.forEach(comments => {
-      	if (radioBtn.value === 'on') {
+    Array.from(app.getElementsByClassName('comments__form'))
+      .forEach(comments => {
+        if (radioBtn.value === 'on') {
           showElement(comments);
-      	} else {
+        } else {
           hideElement(comments);
-      	}
-    	}
+        }
+      }
     );
   };
 
   function getDate( timestamp ) {
-	  const date = new Date(timestamp),
-     	options = { day: '2-digit', month: '2-digit', year: '2-digit',
-    	             hour: '2-digit', minute: '2-digit', second: '2-digit' };
-	  return date.toLocaleString('ru-RU', options);
-	};
+    const date = new Date(timestamp),
+       options = { day: '2-digit', month: '2-digit', year: '2-digit',
+                   hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    return date.toLocaleString('ru-RU', options);
+  };
 
   function el( name, attrs, childs ) {
- 	  const element = document.createElement(name || 'div');
+     const element = document.createElement(name || 'div');
 
     if (typeof attrs === 'object' && attrs) {
-    	Object.keys(attrs).forEach(key => element.setAttribute(key, attrs[key]));
+      Object.keys(attrs).forEach(key => element.setAttribute(key, attrs[key]));
     }
     if (Array.isArray(childs)) {
-    	element.appendChild(
+      element.appendChild(
         childs.reduce(( f, child ) => {
           f.appendChild(child);
           return f;
@@ -154,9 +154,9 @@ function initApp() {
   //<------------------------------>
 
   function postError( header, message ) {
-  	errorHeader.textContent = header;
-	  errorText.textContent = message;
-	  showElement(errorMsg);
+    errorHeader.textContent = header;
+    errorText.textContent = message;
+    showElement(errorMsg);
   };
 
   function showImage( imgData ) {
@@ -167,15 +167,15 @@ function initApp() {
     image.addEventListener('load', () => {
       hideElement(preloader);
       selectMenuModeTo('selected', isLinkedFromShare ? 'comments' : 'share');
-    	renderComments(imgData);
+      renderComments(imgData);
       initWSSConnection(imgData.id);
       isLinkedFromShare = false;
     });
- 	};
+   };
 
   function loadImage( { id } ) {
-  	fetch('https:' + apiURL + '/' + id)
-  	.then(checkResponseStatus)
+    fetch('https:' + apiURL + '/' + id)
+    .then(checkResponseStatus)
     .then(showImage)
     .catch(err => postError(errorHeader.textContent, err.message));
   };
@@ -183,7 +183,7 @@ function initApp() {
   //<------------------------------>
 
   function selectMenuModeTo( mode, selectedItemType ) {
-  	switch(mode) {
+    switch(mode) {
       case 'initial':
         menu.dataset.state = 'initial';
         hideElement(burgerBtn);
@@ -201,72 +201,72 @@ function initApp() {
         menu.dataset.state = 'selected';
         [commentsBtn, drawBtn, shareBtn].find(
           btn => btn.classList.contains(selectedItemType)
-      	).dataset.state = 'selected';
-      	[commentsTools, drawTools, shareTools].find(
+        ).dataset.state = 'selected';
+        [commentsTools, drawTools, shareTools].find(
           tools => tools.classList.contains(selectedItemType + '-tools')
-      	).dataset.state = 'selected';
-      	showElement(burgerBtn);
+        ).dataset.state = 'selected';
+        showElement(burgerBtn);
       break;
     }
 
     const menuSettings = getSessionSettings('menuSettings');
     if (menuSettings) {
-    	menuSettings.mode = mode;
-    	menuSettings.selectItemType = selectedItemType;
-    	sessionStorage.menuSettings = JSON.stringify(menuSettings);
+      menuSettings.mode = mode;
+      menuSettings.selectItemType = selectedItemType;
+      sessionStorage.menuSettings = JSON.stringify(menuSettings);
     } else {
-    	sessionStorage.menuSettings = JSON.stringify({ mode: mode, selectItemType: selectedItemType });
+      sessionStorage.menuSettings = JSON.stringify({ mode: mode, selectItemType: selectedItemType });
     }
-	};
+  };
 
   function selectMenuMode( event ) {
-  	if (burgerBtn === event.target || burgerBtn === event.target.parentElement) {
+    if (burgerBtn === event.target || burgerBtn === event.target.parentElement) {
       selectMenuModeTo('default');
-  	} else if (drawBtn === event.target || drawBtn === event.target.parentElement) {
+    } else if (drawBtn === event.target || drawBtn === event.target.parentElement) {
       selectMenuModeTo('selected', 'draw');
-  	} else if (commentsBtn === event.target || commentsBtn === event.target.parentElement) {
+    } else if (commentsBtn === event.target || commentsBtn === event.target.parentElement) {
       selectMenuModeTo('selected', 'comments');
-  	} else if (shareBtn === event.target || shareBtn === event.target.parentElement) {
+    } else if (shareBtn === event.target || shareBtn === event.target.parentElement) {
       selectMenuModeTo('selected', 'share');
-  	}
+    }
   };
 
   function renderApp() {
-  	const imageSettings = getSessionSettings('imageSettings'),
-    	menuSettings = getSessionSettings('menuSettings');
+    const imageSettings = getSessionSettings('imageSettings'),
+      menuSettings = getSessionSettings('menuSettings');
 
     image.src = '';
-	  if (imageSettings) {
-	  	image.dataset.status = 'load';
+    if (imageSettings) {
+      image.dataset.status = 'load';
       image.src = imageSettings.url;
       urlTextarea.removeAttribute('value');
       urlTextarea.value = imageSettings.path;
-    	renderComments(imageSettings);
+      renderComments(imageSettings);
       initWSSConnection(imageSettings.id);
-	  } else {
-	  	const urlParamID = new URL(`${window.location.href}`).searchParams.get('id');
+    } else {
+      const urlParamID = new URL(`${window.location.href}`).searchParams.get('id');
       if (urlParamID) {
-      	isLinkedFromShare = true;
-      	loadImage({ id: urlParamID });
+        isLinkedFromShare = true;
+        loadImage({ id: urlParamID });
       }
     }
 
-	  if (menuSettings) {
-	  	menu.style.left = menuSettings.left + 'px';
-    	menu.style.top = menuSettings.top + 'px';
-    	selectMenuModeTo(menuSettings.mode, menuSettings.selectItemType);
-    	hideElement(canvas);
+    if (menuSettings) {
+      menu.style.left = menuSettings.left + 'px';
+      menu.style.top = menuSettings.top + 'px';
+      selectMenuModeTo(menuSettings.mode, menuSettings.selectItemType);
+      hideElement(canvas);
 
-    	if (menuSettings.selectItemType === 'draw') {
+      if (menuSettings.selectItemType === 'draw') {
         image.addEventListener('load', initDraw);
-    	}
-    	if (menuSettings.displayComments === 'hidden') {
-      	commentsOff.checked = true;
-      	hideComments(commentsOff);
-    	}
-	  } else {
-	  	selectMenuModeTo('initial');
-	  }
+      }
+      if (menuSettings.displayComments === 'hidden') {
+        commentsOff.checked = true;
+        hideComments(commentsOff);
+      }
+    } else {
+      selectMenuModeTo('initial');
+    }
   };
 
   renderApp();
@@ -275,50 +275,50 @@ function initApp() {
 
   function postImage( path, file ) {
     const formData = new FormData(),
-    	name = file.name.replace(/\.\w*$/, '');
+      name = file.name.replace(/\.\w*$/, '');
 
     formData.append('title', name);
     formData.append('image', file);
 
     showElement(preloader);
     fetch(path, {
-    	body: formData,
-    	method: 'POST'
+      body: formData,
+      method: 'POST'
     })
     .then(checkResponseStatus)
     .then(loadImage)
     .catch(err => postError(errorHeader.textContent, err.message));
   };
 
-	function uploadNewByInput( event ) {
+  function uploadNewByInput( event ) {
     if (errorMsg.style.display !== 'none') { hideElement(errorMsg); }
 
     if (newImgBtn === event.target || newImgBtn === event.target.parentElement) {
-    	const input = document.createElement('input');
-    	input.type = 'file';
-    	input.accept = 'image/jpeg, image/png';
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/jpeg, image/png';
 
-    	input.addEventListener('change', event => postImage('https:' + apiURL, event.currentTarget.files[0]));
-    	input.dispatchEvent(new MouseEvent(event.type, event));
+      input.addEventListener('change', event => postImage('https:' + apiURL, event.currentTarget.files[0]));
+      input.dispatchEvent(new MouseEvent(event.type, event));
     }
-	};
+  };
 
-	function uploadNewByDrop( event ) {
+  function uploadNewByDrop( event ) {
     event.preventDefault();
     if (errorMsg.style.display !== 'none') { hideElement(errorMsg); }
 
     if (event.target === event.currentTarget || event.target === image || event.target === errorMsg || event.target.parentElement === errorMsg) {
-    	if (image.dataset.status !== 'load') {
-	      const file = event.dataTransfer.files[0];
+      if (image.dataset.status !== 'load') {
+        const file = event.dataTransfer.files[0];
 
-	      if (/^image\/[(jpeg) | (png)]/.test(file.type)) {
-	        postImage('https:' + apiURL, file);
-	      } else {
-	      	postError('Ошибка', 'Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.');
-	      }
-    	} else {
+        if (/^image\/[(jpeg) | (png)]/.test(file.type)) {
+          postImage('https:' + apiURL, file);
+        } else {
+          postError('Ошибка', 'Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.');
+        }
+      } else {
         postError('Ошибка', 'Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом "Загрузить новое" в меню');
-    	}
+      }
     }
   };
 
@@ -327,76 +327,76 @@ function initApp() {
   let dragged = null,
       draggedSettings = null;
 
-	function putMenu( event ) {
+  function putMenu( event ) {
     if (event.target.classList.contains('drag')) {
-    	dragged = event.currentTarget;
+      dragged = event.currentTarget;
 
-    	const draggedBounds = event.target.getBoundingClientRect(),
-	      draggedCSS = getComputedStyle(dragged);
+      const draggedBounds = event.target.getBoundingClientRect(),
+        draggedCSS = getComputedStyle(dragged);
 
-    	draggedSettings = {
+      draggedSettings = {
         shiftX: draggedBounds.width / 2,
         shiftY: draggedBounds.height / 2,
         minX: app.offsetLeft,
         maxX: app.offsetWidth - Number(draggedCSS.width.replace('px', '')),
         minY: app.offsetTop,
         maxY: app.offsetHeight - Number(draggedCSS.height.replace('px', ''))
-    	};
+      };
     }
-	};
+  };
 
-	function dragMenu( pageX, pageY ) {
+  function dragMenu( pageX, pageY ) {
     if (dragged) {
-	    event.preventDefault();
-	    let X = pageX - draggedSettings.shiftX,
+      event.preventDefault();
+      let X = pageX - draggedSettings.shiftX,
         Y = pageY - draggedSettings.shiftY;
 
-	    X = Math.min(X, draggedSettings.maxX);
-	    Y = Math.min(Y, draggedSettings.maxY);
-	    X = Math.max(X, draggedSettings.minX);
-	    Y = Math.max(Y, draggedSettings.minY);
+      X = Math.min(X, draggedSettings.maxX);
+      Y = Math.min(Y, draggedSettings.maxY);
+      X = Math.max(X, draggedSettings.minX);
+      Y = Math.max(Y, draggedSettings.minY);
 
-	   	dragged.style.left = X + 'px';
-    	dragged.style.top = Y + 'px';
-    	dragged.style.pointerEvents = 'none';
+       dragged.style.left = X + 'px';
+      dragged.style.top = Y + 'px';
+      dragged.style.pointerEvents = 'none';
     }
-	};
+  };
 
-	function dropMenu() {
-	  if (dragged) {
-	  	const menuSettings = getSessionSettings('menuSettings');
+  function dropMenu() {
+    if (dragged) {
+      const menuSettings = getSessionSettings('menuSettings');
 
-	  	dragged.style.pointerEvents = '';
-    	if (menuSettings) {
+      dragged.style.pointerEvents = '';
+      if (menuSettings) {
         menuSettings.left = dragged.offsetLeft;
         menuSettings.top = dragged.offsetTop;
         sessionStorage.menuSettings = JSON.stringify(menuSettings);
-    	} else {
+      } else {
         sessionStorage.menuSettings = JSON.stringify({ left: dragged.offsetLeft, top: dragged.offsetTop });
-    	}
-	  	dragged = null;
-	  }
-	};
+      }
+      dragged = null;
+    }
+  };
 
   //<------------------------------>
 
-	function checkSelectionResult() {
+  function checkSelectionResult() {
     try {
       const done = document.execCommand('copy');
       console.log('Копирование ссылки: ' + urlTextarea.value + (done ? ' ' : ' не') + 'выполнено');
     } catch(err) {
       console.error('Не удалось скопировать ссылку. Ошибка: ' + err);
     }
-	};
+  };
 
-	function clearSelection() {
-	  try {
+  function clearSelection() {
+    try {
       window.getSelection().removeAllRanges();
     } catch(err) {
       document.selection.empty();
       console.error(err);
     }
-	};
+  };
 
   function copyURL( event ) {
     if (event.target.classList.contains('menu_copy')) {
@@ -413,7 +413,7 @@ function initApp() {
     const newCommentsForm = crtNewCommentsForm(comment.left, comment.top),
       commentsBody = newCommentsForm.querySelector('.comments__body'),
       loader = newCommentsForm.querySelector('.loader'),
-    	commentDate = getDate(comment.timestamp).replace(',', ''),
+      commentDate = getDate(comment.timestamp).replace(',', ''),
       newComment = crtNewCommentNode(commentDate, comment.message);
 
     newComment.dataset.timestamp = comment.timestamp;
@@ -439,7 +439,7 @@ function initApp() {
 
       picture.appendChild(Forms);
     } else {
-    	while (picture.hasChildNodes() && picture.lastElementChild.classList.contains('comments__form')) {
+      while (picture.hasChildNodes() && picture.lastElementChild.classList.contains('comments__form')) {
         picture.removeChild(picture.lastElementChild);
       }
     }
@@ -448,18 +448,18 @@ function initApp() {
 
   //<------------------------------>
 
-	function crtNewCommentNode( date, message ) {
+  function crtNewCommentNode( date, message ) {
     return el('div', { class: 'comment' }, [
       el('p', { class: 'comment__time' }, date),
       el('p', { class: 'comment__message' }, message)
     ]);
-	};
+  };
 
-	function crtNewCommentsFormNode( left, top ) {
-	  return el('form', { class: 'comments__form', style: `left: ${left}px; top: ${top}px;` }, [
-     	el('span', { class: 'comments__marker' }, null),
-	    el('input', { type: 'checkbox', class: 'comments__marker-checkbox' }, null),
-	    el('div', { class: 'comments__body' }, [
+  function crtNewCommentsFormNode( left, top ) {
+    return el('form', { class: 'comments__form', style: `left: ${left}px; top: ${top}px;` }, [
+       el('span', { class: 'comments__marker' }, null),
+      el('input', { type: 'checkbox', class: 'comments__marker-checkbox' }, null),
+      el('div', { class: 'comments__body' }, [
         el('div', { class: 'comment' }, [
           el('div', { class: 'loader' }, [
              el('span', null, null),
@@ -467,17 +467,17 @@ function initApp() {
              el('span', null, null),
              el('span', null, null),
              el('span', null, null)
-        	 ])
+           ])
         ]),
         el('textarea', { class: 'comments__input', type: 'text', placeholder: 'Напишите ответ...' }, null),
         el('input', { class: 'comments__close', type: 'button', value: 'Закрыть' }, null),
         el('input', { class: 'comments__submit', type: 'submit', value: 'Отправить' }, null)
-    	])
+      ])
     ]);
-	};
+  };
 
   function crtNewCommentsForm ( left, top ) {
-  	const newCommentsForm = crtNewCommentsFormNode(left, top);
+    const newCommentsForm = crtNewCommentsFormNode(left, top);
 
     newCommentsForm.firstElementChild.dataset.left = parseInt(newCommentsForm.style.left);
     newCommentsForm.firstElementChild.dataset.top = parseInt(newCommentsForm.style.top);
@@ -497,24 +497,24 @@ function initApp() {
   };
 
   function loadComment( imgData, left, top ) {
-  	const commentForm = app.querySelector(`.comments__marker[data-left="${left}"][data-top="${top}"]`).parentElement,
-    	loader = commentForm.querySelector('.loader');
+    const commentForm = app.querySelector(`.comments__marker[data-left="${left}"][data-top="${top}"]`).parentElement,
+      loader = commentForm.querySelector('.loader');
 
-	  for (const id in imgData.comments) {
-	    const comment = imgData.comments[id],
-      	isPostedComment = app.querySelector(`.comment[data-timestamp="${comment.timestamp}"]`);
+    for (const id in imgData.comments) {
+      const comment = imgData.comments[id],
+        isPostedComment = app.querySelector(`.comment[data-timestamp="${comment.timestamp}"]`);
 
-	    if (comment.left === left && comment.top === top && !isPostedComment) {
-	    	appendNewComment(comment, commentForm);
+      if (comment.left === left && comment.top === top && !isPostedComment) {
+        appendNewComment(comment, commentForm);
         hideElement(loader);
-	    	break ;
-	    }
-	  }
+        break ;
+      }
+    }
 
-	  const menuSettings = getSessionSettings('menuSettings');
-	  if (menuSettings.displayComments === 'hidden') { hideComments(commentsOff); }
+    const menuSettings = getSessionSettings('menuSettings');
+    if (menuSettings.displayComments === 'hidden') { hideComments(commentsOff); }
 
-	  return imgData;
+    return imgData;
   };
 
   function postComment( message, left, top ) {
@@ -522,8 +522,8 @@ function initApp() {
       body = 'message=' + encodeURIComponent(message) + '&left=' + encodeURIComponent(left) + '&top=' + encodeURIComponent(top);
 
     return fetch('https:' + apiURL + '/' + id + '/comments', {
-    	body: body,
-    	method: 'POST',
+      body: body,
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -536,7 +536,7 @@ function initApp() {
 
   function sendComment( event ) {
     if (event.target.classList.contains('comments__submit')) {
-     	event.preventDefault();
+       event.preventDefault();
       const crntCommentsForm = event.target.parentElement.parentElement,
         loader = crntCommentsForm.querySelector('.loader'),
         input = crntCommentsForm.querySelector('.comments__input'),
@@ -545,43 +545,43 @@ function initApp() {
 
       showElement(loader);
       postComment(input.value ? input.value : '\n', left, top);
-    	input.value = '';
+      input.value = '';
     }
   };
 
   //<------------------------------>
 
   function toggleCommentsShow( event ) {
-	  if (event.target.classList.contains('menu__toggle')) {
-	  	hideComments(event.target);
+    if (event.target.classList.contains('menu__toggle')) {
+      hideComments(event.target);
 
-	    const menuSettings = getSessionSettings('menuSettings');
-	    menuSettings.displayComments = menuSettings.displayComments ? '' : 'hidden';
-	    sessionStorage.menuSettings = JSON.stringify(menuSettings);
+      const menuSettings = getSessionSettings('menuSettings');
+      menuSettings.displayComments = menuSettings.displayComments ? '' : 'hidden';
+      sessionStorage.menuSettings = JSON.stringify(menuSettings);
     }
-	};
+  };
 
   function toggleDisplayCommentsForm( commentsFormCheckbox, isClosedByBtn ) {
-  	if (commentsFormCheckbox) {
+    if (commentsFormCheckbox) {
       const [comment] = commentsFormCheckbox.parentElement.getElementsByClassName('comment');
 
       if (comment.firstElementChild.classList.contains('loader')) {
-	      picture.removeChild(commentsFormCheckbox.parentElement);
-	  	}
+        picture.removeChild(commentsFormCheckbox.parentElement);
+      }
       if (!isClosedByBtn || !comment.firstElementChild.classList.contains('loader')) {
-      	commentsFormCheckbox.parentElement.style.zIndex = '';
-	      commentsFormCheckbox.checked = commentsFormCheckbox.disabled = false;
-	  	}
-  	}
+        commentsFormCheckbox.parentElement.style.zIndex = '';
+        commentsFormCheckbox.checked = commentsFormCheckbox.disabled = false;
+      }
+    }
   };
 
   function addNewCommentsForm( event ) {
-	  if (event.target.classList.contains('current-image') && commentsBtn.dataset.state === 'selected') {
-	  	const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
-	  	toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
+    if (event.target.classList.contains('current-image') && commentsBtn.dataset.state === 'selected') {
+      const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
+      toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
 
-	  	const newCommentsForm = crtNewCommentsForm(event.pageX - clickPointShifts.left, event.pageY - clickPointShifts.top);
-	  	picture.appendChild(newCommentsForm);
+      const newCommentsForm = crtNewCommentsForm(event.pageX - clickPointShifts.left, event.pageY - clickPointShifts.top);
+      picture.appendChild(newCommentsForm);
       newCommentsForm.querySelector('.comments__marker-checkbox').checked = true;
       newCommentsForm.querySelector('.comments__marker-checkbox').disabled = true;
       newCommentsForm.style.zIndex = '5';
@@ -589,7 +589,7 @@ function initApp() {
   };
 
   function openCommentsForm( event ) {
-  	if (event.target.classList.contains('comments__marker-checkbox') && event.target.checked) {
+    if (event.target.classList.contains('comments__marker-checkbox') && event.target.checked) {
       const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
 
       toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
@@ -599,7 +599,7 @@ function initApp() {
   };
 
   function typeComment( event ) {
-  	if (event.target.classList.contains('comments__input')) {
+    if (event.target.classList.contains('comments__input')) {
       event.target.focus();
     }
   };
@@ -656,7 +656,7 @@ function initApp() {
 
     (function tick() {
       if (needsRendering) {
-      	draw();
+        draw();
         needsRendering = false;
       }
       window.requestAnimationFrame(tick);
@@ -677,10 +677,10 @@ function initApp() {
       if (!isDrawing) {
         return;
       }
-    	const stroke = strokes[0];
-    	stroke.push([event.offsetX, event.offsetY]);
-    	needsRendering = true;
-    	debounceSendMask();
+      const stroke = strokes[0];
+      stroke.push([event.offsetX, event.offsetY]);
+      needsRendering = true;
+      debounceSendMask();
     });
 
     canvas.addEventListener('mouseup', () => {
@@ -693,25 +693,25 @@ function initApp() {
   //<------------------------------>
 
     function sendMask() {
-    	canvas.toBlob(blob => {
-	    	new Promise((done, fail) => {
-	        socket.send(blob);
-	        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-	    	})
-	    	.then(() => strokes = []);
-	    });
-	  }
+      canvas.toBlob(blob => {
+        new Promise((done, fail) => {
+          socket.send(blob);
+          canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        })
+        .then(() => strokes = []);
+      });
+    }
 
     function changeColor( event ) {
       if (!event.target.checked) {
         return;
       }
-    	checkedColorBtn.removeAttribute('checked');
-    	checkedColorBtn = event.target;
-    	event.target.setAttribute('checked', '');
+      checkedColorBtn.removeAttribute('checked');
+      checkedColorBtn = event.target;
+      event.target.setAttribute('checked', '');
 
-    	canvasCtx.strokeStyle = canvasCtx.fillStyle = penColor = getComputedStyle(event.target.nextElementSibling).backgroundColor;
-    	canvasCtx.globalCompositeOperation = 'source-over';
+      canvasCtx.strokeStyle = canvasCtx.fillStyle = penColor = getComputedStyle(event.target.nextElementSibling).backgroundColor;
+      canvasCtx.globalCompositeOperation = 'source-over';
     };
 
     drawTools.addEventListener('change', changeColor);
@@ -720,88 +720,88 @@ function initApp() {
   //<------------------------------>
 
   //Загрузка файла на сервер:
-	menu.addEventListener('click', uploadNewByInput);
+  menu.addEventListener('click', uploadNewByInput);
   app.addEventListener('dragover', ( event ) => event.preventDefault());
   app.addEventListener('drop', uploadNewByDrop);
 
-	//Перемещение меню:
-	const moveMenu = throttle((...coords ) => dragMenu(...coords), true);
+  //Перемещение меню:
+  const moveMenu = throttle((...coords ) => dragMenu(...coords), true);
     menu.addEventListener('mousedown', putMenu);
-	app.addEventListener('mousemove', ( event ) => moveMenu(event.pageX, event.pageY));
-	app.addEventListener('mouseup', dropMenu);
+  app.addEventListener('mousemove', ( event ) => moveMenu(event.pageX, event.pageY));
+  app.addEventListener('mouseup', dropMenu);
 
-	//Переключение пунктов меню:
-	menu.addEventListener('click', selectMenuMode);
+  //Переключение пунктов меню:
+  menu.addEventListener('click', selectMenuMode);
 
-	//Копирование ссылки в режиме "Поделиться":
-	shareTools.addEventListener('click', copyURL);
+  //Копирование ссылки в режиме "Поделиться":
+  shareTools.addEventListener('click', copyURL);
   app.addEventListener('click', ( event ) => {
     if (event.target !== urlTextarea) {
-    	urlTextarea.blur();
+      urlTextarea.blur();
      }
-	});
+  });
 
-	//Переключатели отображаения комментариев на странице:
-	commentsTools.addEventListener('change', toggleCommentsShow);
+  //Переключатели отображаения комментариев на странице:
+  commentsTools.addEventListener('change', toggleCommentsShow);
 
-	//Работа с формой комментариев:
-	picture.addEventListener('click', addNewCommentsForm);
+  //Работа с формой комментариев:
+  picture.addEventListener('click', addNewCommentsForm);
   picture.addEventListener('change', openCommentsForm);
   picture.addEventListener('click', typeComment);
-	picture.addEventListener('click', sendComment);
-	picture.addEventListener('click', closeCommentsForm);
+  picture.addEventListener('click', sendComment);
+  picture.addEventListener('click', closeCommentsForm);
 
   //Инициализация режима рисования:
   drawBtn.addEventListener('click', initDraw);
 
-	//Инициализация и логика работы вебсокет соединения:
-	function initWSSConnection( id ) {
-  	socket = new WebSocket('wss:' + apiURL + '/' + id);
+  //Инициализация и логика работы вебсокет соединения:
+  function initWSSConnection( id ) {
+    socket = new WebSocket('wss:' + apiURL + '/' + id);
 
-  	function addCommentInDirectory(	comment, directory ) {
+    function addCommentInDirectory(  comment, directory ) {
       directory[comment.id] = {
-	      left: comment.left,
-	      top: comment.top,
-	      message: comment.message,
-	      timestamp: comment.timestamp
-	    };
-  	};
+        left: comment.left,
+        top: comment.top,
+        message: comment.message,
+        timestamp: comment.timestamp
+      };
+    };
 
     function updateApp( event ) {
-    	const wssResponse = JSON.parse(event.data);
+      const wssResponse = JSON.parse(event.data);
 
-    	switch(wssResponse.event) {
-    	  case 'pic':
-        	if (wssResponse.pic.mask) {
+      switch(wssResponse.event) {
+        case 'pic':
+          if (wssResponse.pic.mask) {
             canvas.style.background = `url(${wssResponse.pic.mask})`;
           } else {
             canvas.style.background = '';
           }
-    	  break;
+        break;
 
-    	  case 'comment':
+        case 'comment':
           const imageSettings = getSessionSettings('imageSettings'),
-          	commentsMarker = app.querySelector(`.comments__marker[data-left="${wssResponse.comment.left}"][data-top="${wssResponse.comment.top}"]`);
+            commentsMarker = app.querySelector(`.comments__marker[data-left="${wssResponse.comment.left}"][data-top="${wssResponse.comment.top}"]`);
 
           if (imageSettings.comments) {
-          	addCommentInDirectory(wssResponse.comment, imageSettings.comments);
+            addCommentInDirectory(wssResponse.comment, imageSettings.comments);
           } else {
-          	imageSettings.comments = {};
-          	addCommentInDirectory(wssResponse.comment, imageSettings.comments);
+            imageSettings.comments = {};
+            addCommentInDirectory(wssResponse.comment, imageSettings.comments);
           }
 
-    	  	if (commentsMarker) {
-    	      loadComment(imageSettings, wssResponse.comment.left, wssResponse.comment.top);
-    	    } else {
-        	  picture.appendChild(crtNewCommentsForm(wssResponse.comment.left, wssResponse.comment.top));
-    	      loadComment(imageSettings, wssResponse.comment.left, wssResponse.comment.top);
-    	    }
-    	  break;
+          if (commentsMarker) {
+            loadComment(imageSettings, wssResponse.comment.left, wssResponse.comment.top);
+          } else {
+            picture.appendChild(crtNewCommentsForm(wssResponse.comment.left, wssResponse.comment.top));
+            loadComment(imageSettings, wssResponse.comment.left, wssResponse.comment.top);
+          }
+        break;
 
-    	  case 'mask':
-        	canvas.style.background = `url(${wssResponse.url})`;
-    	  break;
-    	}
+        case 'mask':
+          canvas.style.background = `url(${wssResponse.url})`;
+        break;
+      }
     };
 
     socket.addEventListener('message', updateApp);
