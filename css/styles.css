@@ -34,6 +34,7 @@ body {
   font-size: 0;
   border: 1px solid #51606e;
   z-index: 1000;
+  white-space: nowrap;
 }
 
 .menu__item {
@@ -426,7 +427,7 @@ body {
 .comment__message {
   color: #ffffff;
   line-height: 130%;
-  white-space: initial;
+  word-wrap: break-word;
 }
 
 .comments__body input, .comments__body textarea {
