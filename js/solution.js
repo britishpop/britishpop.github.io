@@ -23,13 +23,17 @@ function initApp() {
 
   const picture = (() => {
     const picture = document.createElement('div'),
-      canvas = document.createElement('canvas');
+      canvas = document.createElement('canvas'),
+      imageMask = document.createElement('div');
 
     picture.id = 'picture';
     picture.appendChild(image);
 
+    imageMask.classList.add('current-image');
+    picture.appendChild(imageMask);
+
     canvas.classList.add('current-image');
-    picture.insertBefore(canvas, image.nextElementSibling);
+    picture.appendChild(canvas);
 
     app.insertBefore(picture, menu.nextElementSibling);
     return picture;
@@ -48,6 +52,7 @@ function initApp() {
   const penWidth = 4;
   let socket,
     canvas = picture.querySelector('canvas.current-image'),
+    imageMask = picture.querySelector('div.current-image'),
     checkedColorBtn = menu.querySelector('.menu__color[checked=""]'),
     isLinkedFromShare = false;
 
@@ -356,7 +361,7 @@ function initApp() {
       X = Math.max(X, draggedSettings.minX);
       Y = Math.max(Y, draggedSettings.minY);
 
-       dragged.style.left = X + 'px';
+      dragged.style.left = X + 'px';
       dragged.style.top = Y + 'px';
       dragged.style.pointerEvents = 'none';
     }
@@ -580,7 +585,7 @@ function initApp() {
       const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
       toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
 
-      const newCommentsForm = crtNewCommentsForm(event.pageX - clickPointShifts.left, event.pageY - clickPointShifts.top);
+      const newCommentsForm = crtNewCommentsForm(event.offsetX - clickPointShifts.left, event.offsetY - clickPointShifts.top);
       picture.appendChild(newCommentsForm);
       newCommentsForm.querySelector('.comments__marker-checkbox').checked = true;
       newCommentsForm.querySelector('.comments__marker-checkbox').disabled = true;
@@ -717,6 +722,13 @@ function initApp() {
     drawTools.addEventListener('change', changeColor);
   };
 
+  function maskSize(image, imageMask) {
+	  imageMask.style.width = image.clientWidth + 'px';
+	  imageMask.style.height = image.clientHeight + 'px';
+    picture.style.width = image.clientWidth + 'px';
+    picture.style.height = image.clientHeight + 'px';
+  };
+
   //<------------------------------>
 
   //Загрузка файла на сервер:
@@ -773,7 +785,8 @@ function initApp() {
       switch(wssResponse.event) {
         case 'pic':
           if (wssResponse.pic.mask) {
-            canvas.style.background = `url(${wssResponse.pic.mask})`;
+            maskSize(image, imageMask);
+            imageMask.style.background = `url(${wssResponse.pic.mask})`;
           } else {
             canvas.style.background = '';
           }
@@ -799,7 +812,7 @@ function initApp() {
         break;
 
         case 'mask':
-          canvas.style.background = `url(${wssResponse.url})`;
+          imageMask.style.background = `url(${wssResponse.url})`;
         break;
       }
     };
