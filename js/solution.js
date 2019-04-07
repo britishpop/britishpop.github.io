@@ -239,6 +239,7 @@ function initApp() {
         } else if (shareBtn === event.target || shareBtn === event.target.parentElement) {
             selectMenuModeTo('selected', 'share');
         }
+        onScreenMenu();
     };
 
     function renderApp() {
@@ -386,6 +387,19 @@ function initApp() {
             }
             dragged = null;
         }
+    };
+
+    function onScreenMenu() {
+        const appWidth = app.offsetWidth;
+        const appHeight = app.offsetHeight;
+
+        if (menu.offsetLeft + menu.offsetWidth > appWidth) {
+            menu.style.left = appWidth - menu.offsetWidth + 'px'
+        };
+
+        if (menu.offsetTop + menu.offsetHeight > appHeight) {
+            menu.style.top = appHeight - menu.offsetHeight + 'px'
+        };
     };
 
     //<------------------------------>
@@ -746,6 +760,7 @@ function initApp() {
     menu.addEventListener('mousedown', putMenu);
     app.addEventListener('mousemove', (event) => moveMenu(event.pageX, event.pageY));
     app.addEventListener('mouseup', dropMenu);
+    window.addEventListener('resize', onScreenMenu);
 
     //Переключение пунктов меню:
     menu.addEventListener('click', selectMenuMode);
