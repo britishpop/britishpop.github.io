@@ -177,6 +177,7 @@ function initApp() {
         image.addEventListener('load', () => {
             hideElement(preloader);
             selectMenuModeTo('selected', isLinkedFromShare ? 'comments' : 'share');
+            onScreenMenu();
             renderComments(imgData);
             initWSSConnection(imgData.id);
             isLinkedFromShare = false;
