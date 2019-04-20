@@ -15,29 +15,12 @@ function initApp() {
         shareTools = menu.querySelector('.share-tools'),
         urlTextarea = shareTools.querySelector('.menu__url'),
         defaultCommentsForm = app.removeChild(app.querySelector('.comments__form')),
-        image = app.querySelector('.current-image'),
+        picture = app.querySelector('#picture'),
+        image = picture.querySelector('img.current-image'),
         preloader = app.querySelector('.image-loader'),
         errorMsg = app.querySelector('.error'),
         errorHeader = errorMsg.querySelector('.error__header'),
         errorText = errorMsg.querySelector('.error__message');
-
-    const picture = (() => {
-        const picture = document.createElement('div'),
-            canvas = document.createElement('canvas'),
-            imageMask = document.createElement('div');
-
-        picture.id = 'picture';
-        picture.appendChild(image);
-
-        imageMask.classList.add('current-image');
-        picture.appendChild(imageMask);
-
-        canvas.classList.add('current-image');
-        picture.appendChild(canvas);
-
-        app.insertBefore(picture, menu.nextElementSibling);
-        return picture;
-    })();
 
     const clickPointShifts = (() => {
         const pointShifts = {},
