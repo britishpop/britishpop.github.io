@@ -118,7 +118,7 @@ function initApp() {
     };
 
     function hideComments(radioBtn) {
-        Array.from(app.getElementsByClassName('comments__form'))
+        app.querySelectorAll('.comments__form')
             .forEach(comments => {
                 if (radioBtn.value === 'on') {
                     showElement(comments);
@@ -203,7 +203,7 @@ function initApp() {
 
             case 'default':
                 menu.dataset.state = 'default';
-                Array.from(menu.querySelectorAll(`[data-state='selected']`)).forEach(el => el.dataset.state = '');
+                menu.querySelectorAll(`[data-state='selected']`).forEach(el => el.dataset.state = '');
                 drawBtn.addEventListener('click', initDraw);
                 hideElement(canvas);
                 break;
@@ -512,7 +512,7 @@ function initApp() {
 
     function appendNewComment(comment, commentsForm) {
         const commentsBody = commentsForm.querySelector('.comments__body'),
-            comments = Array.from(commentsBody.getElementsByClassName('comment')),
+            comments = Array.from(commentsBody.querySelectorAll('.comment')),
             commentDate = getDate(comment.timestamp).replace(',', ''),
             newComment = crtNewCommentNode(commentDate, comment.message),
             nextComment = comments.find(curComment => Number(curComment.dataset.timestamp) > comment.timestamp);
@@ -588,7 +588,7 @@ function initApp() {
 
     function toggleDisplayCommentsForm(commentsFormCheckbox, isClosedByBtn) {
         if (commentsFormCheckbox) {
-            const [comment] = commentsFormCheckbox.parentElement.getElementsByClassName('comment');
+            const [comment] = commentsFormCheckbox.parentElement.querySelectorAll('.comment');
 
             if (comment.firstElementChild.classList.contains('loader')) {
                 picture.removeChild(commentsFormCheckbox.parentElement);
