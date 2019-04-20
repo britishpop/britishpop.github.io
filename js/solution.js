@@ -61,14 +61,13 @@ function initApp() {
     function throttle(cb, isAnimation, delay) {
         let isWaiting = false;
         return function(...args) {
-            if (!isWaiting) {
-                cb.apply(this, args);
-                isWaiting = true;
-                if (isAnimation) {
-                    requestAnimationFrame(() => isWaiting = false);
-                } else {
-                    setTimeout(() => isWaiting = false, delay);
-                }
+            if (isWaiting) { return };
+            cb.apply(this, args);
+            isWaiting = true;
+            if (isAnimation) {
+                requestAnimationFrame(() => isWaiting = false);
+            } else {
+                setTimeout(() => isWaiting = false, delay);
             }
         }
     };
@@ -305,32 +304,32 @@ function initApp() {
     function uploadNewByInput(event) {
         if (errorMsg.style.display !== 'none') { hideElement(errorMsg); }
 
-        if (newImgBtn === event.target || newImgBtn === event.target.parentElement) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/jpeg, image/png';
+        if (!(newImgBtn === event.target || newImgBtn === event.target.parentElement)) { return }
 
-            input.addEventListener('change', event => postImage('https:' + apiURL, event.currentTarget.files[0]));
-            input.dispatchEvent(new MouseEvent(event.type, event));
-        }
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/jpeg, image/png';
+
+        input.addEventListener('change', event => postImage('https:' + apiURL, event.currentTarget.files[0]));
+        input.dispatchEvent(new MouseEvent(event.type, event));
     };
 
     function uploadNewByDrop(event) {
         event.preventDefault();
         if (errorMsg.style.display !== 'none') { hideElement(errorMsg); }
 
-        if (event.target === event.currentTarget || event.target === imageMask || event.target === errorMsg || event.target.parentElement === errorMsg) {
-            if (image.dataset.status !== 'load') {
-                const file = event.dataTransfer.files[0];
+        if (!(event.target === event.currentTarget || event.target === imageMask || event.target === errorMsg || event.target.parentElement === errorMsg)) { return }
 
-                if (/^image\/[(jpeg) | (png)]/.test(file.type)) {
-                    postImage('https:' + apiURL, file);
-                } else {
-                    postError('Ошибка', 'Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.');
-                }
+        if (image.dataset.status !== 'load') {
+            const file = event.dataTransfer.files[0];
+
+            if (/^image\/[(jpeg) | (png)]/.test(file.type)) {
+                postImage('https:' + apiURL, file);
             } else {
-                postError('Ошибка', 'Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом "Загрузить новое" в меню');
+                postError('Ошибка', 'Неверный формат файла. Пожалуйста, выберите изображение в формате .jpg или .png.');
             }
+        } else {
+            postError('Ошибка', 'Чтобы загрузить новое изображение, пожалуйста, воспользуйтесь пунктом "Загрузить новое" в меню');
         }
     };
 
@@ -340,54 +339,51 @@ function initApp() {
         draggedSettings = null;
 
     function putMenu(event) {
-        if (event.target.classList.contains('drag')) {
-            dragged = event.currentTarget;
+        if (!event.target.classList.contains('drag')) { return };
+        dragged = event.currentTarget;
 
-            const draggedBounds = event.target.getBoundingClientRect(),
-                draggedCSS = getComputedStyle(dragged);
+        const draggedBounds = event.target.getBoundingClientRect(),
+            draggedCSS = getComputedStyle(dragged);
 
-            draggedSettings = {
-                shiftX: draggedBounds.width / 2,
-                shiftY: draggedBounds.height / 2,
-                minX: app.offsetLeft,
-                maxX: app.offsetWidth - Number(draggedCSS.width.replace('px', '')),
-                minY: app.offsetTop,
-                maxY: app.offsetHeight - Number(draggedCSS.height.replace('px', ''))
-            };
+        draggedSettings = {
+            shiftX: draggedBounds.width / 2,
+            shiftY: draggedBounds.height / 2,
+            minX: app.offsetLeft,
+            maxX: app.offsetWidth - Number(draggedCSS.width.replace('px', '')),
+            minY: app.offsetTop,
+            maxY: app.offsetHeight - Number(draggedCSS.height.replace('px', ''))
         }
     };
 
     function dragMenu(pageX, pageY) {
-        if (dragged) {
-            event.preventDefault();
-            let X = pageX - draggedSettings.shiftX,
-                Y = pageY - draggedSettings.shiftY;
+        if (!dragged) { return }
+        event.preventDefault();
+        let X = pageX - draggedSettings.shiftX,
+            Y = pageY - draggedSettings.shiftY;
 
-            X = Math.min(X, draggedSettings.maxX);
-            Y = Math.min(Y, draggedSettings.maxY);
-            X = Math.max(X, draggedSettings.minX);
-            Y = Math.max(Y, draggedSettings.minY);
+        X = Math.min(X, draggedSettings.maxX);
+        Y = Math.min(Y, draggedSettings.maxY);
+        X = Math.max(X, draggedSettings.minX);
+        Y = Math.max(Y, draggedSettings.minY);
 
-            dragged.style.left = X + 'px';
-            dragged.style.top = Y + 'px';
-            dragged.style.pointerEvents = 'none';
-        }
+        dragged.style.left = X + 'px';
+        dragged.style.top = Y + 'px';
+        dragged.style.pointerEvents = 'none';
     };
 
     function dropMenu() {
-        if (dragged) {
-            const menuSettings = getSessionSettings('menuSettings');
+        if (!dragged) { return }
+        const menuSettings = getSessionSettings('menuSettings');
 
-            dragged.style.pointerEvents = '';
-            if (menuSettings) {
-                menuSettings.left = dragged.offsetLeft;
-                menuSettings.top = dragged.offsetTop;
-                sessionStorage.menuSettings = JSON.stringify(menuSettings);
-            } else {
-                sessionStorage.menuSettings = JSON.stringify({ left: dragged.offsetLeft, top: dragged.offsetTop });
-            }
-            dragged = null;
+        dragged.style.pointerEvents = '';
+        if (menuSettings) {
+            menuSettings.left = dragged.offsetLeft;
+            menuSettings.top = dragged.offsetTop;
+            sessionStorage.menuSettings = JSON.stringify(menuSettings);
+        } else {
+            sessionStorage.menuSettings = JSON.stringify({ left: dragged.offsetLeft, top: dragged.offsetTop });
         }
+        dragged = null;
     };
 
     function onScreenMenu() {
@@ -560,80 +556,80 @@ function initApp() {
     };
 
     function sendComment(event) {
-        if (event.target.classList.contains('comments__submit')) {
-            event.preventDefault();
-            const crntCommentsForm = event.target.parentElement.parentElement,
-                loader = crntCommentsForm.querySelector('.loader'),
-                input = crntCommentsForm.querySelector('.comments__input'),
-                left = parseInt(crntCommentsForm.style.left),
-                top = parseInt(crntCommentsForm.style.top);
+        if (!event.target.classList.contains('comments__submit')) { return };
 
-            showElement(loader);
-            postComment(input.value ? input.value : '\n', left, top);
-            input.value = '';
-        }
+        event.preventDefault();
+        const crntCommentsForm = event.target.parentElement.parentElement,
+            loader = crntCommentsForm.querySelector('.loader'),
+            input = crntCommentsForm.querySelector('.comments__input'),
+            left = parseInt(crntCommentsForm.style.left),
+            top = parseInt(crntCommentsForm.style.top);
+
+        showElement(loader);
+        postComment(input.value ? input.value : '\n', left, top);
+        input.value = '';
     };
 
     //<------------------------------>
 
     function toggleCommentsShow(event) {
-        if (event.target.classList.contains('menu__toggle')) {
-            hideComments(event.target);
+        if (!event.target.classList.contains('menu__toggle')) { return };
 
-            const menuSettings = getSessionSettings('menuSettings');
-            menuSettings.displayComments = menuSettings.displayComments ? '' : 'hidden';
-            sessionStorage.menuSettings = JSON.stringify(menuSettings);
-        }
+        hideComments(event.target);
+
+        const menuSettings = getSessionSettings('menuSettings');
+        menuSettings.displayComments = menuSettings.displayComments ? '' : 'hidden';
+        sessionStorage.menuSettings = JSON.stringify(menuSettings);
     };
 
     function toggleDisplayCommentsForm(commentsFormCheckbox, isClosedByBtn) {
-        if (commentsFormCheckbox) {
-            const [comment] = commentsFormCheckbox.parentElement.querySelectorAll('.comment');
+        if (!commentsFormCheckbox) { return };
 
-            if (comment.firstElementChild.classList.contains('loader')) {
-                picture.removeChild(commentsFormCheckbox.parentElement);
-            }
-            if (!isClosedByBtn || !comment.firstElementChild.classList.contains('loader')) {
-                commentsFormCheckbox.parentElement.style.zIndex = '';
-                commentsFormCheckbox.checked = commentsFormCheckbox.disabled = false;
-            }
+        const [comment] = commentsFormCheckbox.parentElement.querySelectorAll('.comment');
+
+        if (comment.firstElementChild.classList.contains('loader')) {
+            picture.removeChild(commentsFormCheckbox.parentElement);
+        }
+        if (!isClosedByBtn || !comment.firstElementChild.classList.contains('loader')) {
+            commentsFormCheckbox.parentElement.style.zIndex = '';
+            commentsFormCheckbox.checked = commentsFormCheckbox.disabled = false;
         }
     };
 
     function addNewCommentsForm(event) {
-        if (event.target.classList.contains('current-image') && commentsBtn.dataset.state === 'selected') {
-            const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
-            toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
+        if (!(event.target.classList.contains('current-image') && commentsBtn.dataset.state === 'selected')) { return };
 
-            const newCommentsForm = crtNewCommentsForm(event.offsetX - clickPointShifts.left, event.offsetY - clickPointShifts.top);
-            picture.appendChild(newCommentsForm);
-            newCommentsForm.querySelector('.comments__marker-checkbox').checked = true;
-            newCommentsForm.querySelector('.comments__marker-checkbox').disabled = true;
-            newCommentsForm.style.zIndex = '5';
-        }
+        const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
+        toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
+
+        const newCommentsForm = crtNewCommentsForm(event.offsetX - clickPointShifts.left, event.offsetY - clickPointShifts.top);
+        picture.appendChild(newCommentsForm);
+        newCommentsForm.querySelector('.comments__marker-checkbox').checked = true;
+        newCommentsForm.querySelector('.comments__marker-checkbox').disabled = true;
+        newCommentsForm.style.zIndex = '5';
     };
 
     function openCommentsForm(event) {
-        if (event.target.classList.contains('comments__marker-checkbox') && event.target.checked) {
-            const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
+        if (!(event.target.classList.contains('comments__marker-checkbox') && event.target.checked)) { return };
 
-            toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
-            event.target.disabled = true;
-            event.target.parentElement.style.zIndex = '5';
-        }
+        const prevCommentsFormCheckbox = picture.querySelector('.comments__marker-checkbox[disabled=""]');
+
+        toggleDisplayCommentsForm(prevCommentsFormCheckbox, false);
+        event.target.disabled = true;
+        event.target.parentElement.style.zIndex = '5';
     };
 
     function typeComment(event) {
-        if (event.target.classList.contains('comments__input')) {
-            event.target.focus();
-        }
+        if (!event.target.classList.contains('comments__input')) { return };
+
+        event.target.focus();
     };
 
     function closeCommentsForm(event) {
-        if (event.target.classList.contains('comments__close')) {
-            const [checkbox] = event.target.parentElement.parentElement.getElementsByClassName('comments__marker-checkbox');
-            toggleDisplayCommentsForm(checkbox, true);
-        }
+        if (!event.target.classList.contains('comments__close')) { return };
+
+        const [checkbox] = event.target.parentElement.parentElement.getElementsByClassName('comments__marker-checkbox');
+        toggleDisplayCommentsForm(checkbox, true);
     };
 
     //<------------------------------>
